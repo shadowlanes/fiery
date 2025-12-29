@@ -3,25 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import InputSection from './InputSection'
 import ProgressTracker from './ProgressTracker'
 import ProjectionChart from './ProjectionChart'
+import { getInitialInputs } from '@/utils/inputFetcher'
 import { generateProjectionData } from '@/utils/calculations'
 
 const Dashboard = () => {
-    const [inputs, setInputs] = useState({
-        targetMultiple: 25, // x annual expense
-        initialCorpus: 250, // k$
-        emergencyCorpus: 40, // k$
-        annualIncome: 150, // k$ (example default)
-        annualExpense: 60, // k$ (example default)
-        allocation: {
-            alpha: 32,
-            core: 68,
-        },
-        rates: {
-            emergency: 1,
-            alpha: 10,
-            core: 6,
-        }
-    });
+    const [inputs, setInputs] = useState(getInitialInputs);
 
     const monthlyContribution = useMemo(() => {
         const contribution = Math.max(0, inputs.annualIncome - inputs.annualExpense) / 12;
@@ -67,6 +53,7 @@ const Dashboard = () => {
 
                 <div className="lg:col-span-2 space-y-6">
                     <ProgressTracker
+                        inputs={inputs}
                         current={inputs.initialCorpus}
                         target={targetNumber}
                         yearsToFire={yearsToFire}

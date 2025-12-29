@@ -1,15 +1,29 @@
-import React from 'react'
 import { Progress } from "@/components/ui/progress"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Share2 } from "lucide-react"
 import { formatCurrency } from "@/utils/calculations"
+import { getShareUrl } from "@/utils/inputFetcher"
+import { toast } from "sonner"
 
-const ProgressTracker = ({ current, target, yearsToFire, fireYear }) => {
+const ProgressTracker = ({ inputs, current, target, yearsToFire, fireYear }) => {
     const percentage = Math.min(100, Math.max(0, (current / target) * 100));
+
+    const handleShare = () => {
+        const url = getShareUrl(inputs);
+        navigator.clipboard.writeText(url).then(() => {
+            toast.success("Configuration URL copied to clipboard!");
+        });
+    };
 
     return (
         <Card className="border-primary/20 bg-primary/5 shadow-md">
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
                 <CardTitle className="text-lg font-medium text-muted-foreground uppercase tracking-wider">Progress to FIRE</CardTitle>
+                <Button variant="ghost" size="icon" onClick={handleShare} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                    <Share2 className="h-4 w-4" />
+                    <span className="sr-only">Share Configuration</span>
+                </Button>
             </CardHeader>
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
