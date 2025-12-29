@@ -94,5 +94,5 @@ export const formatCurrency = (value) => {
         style: 'currency',
         currency: 'USD',
         maximumFractionDigits: 0,
-    }).format(value);
+    }).format(value) + 'k';
 };

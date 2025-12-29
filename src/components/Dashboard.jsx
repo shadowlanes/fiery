@@ -7,23 +7,30 @@ import { generateProjectionData } from '@/utils/calculations'
 
 const Dashboard = () => {
     const [inputs, setInputs] = useState({
-        targetNumber: 2250000,
-        initialCorpus: 250000,
-        monthlyContribution: 7500,
+        targetNumber: 2250, // k$
+        initialCorpus: 250, // k$
+        annualIncome: 150, // k$ (example default)
+        annualExpense: 60, // k$ (example default)
         allocation: {
             emergency: 1,
-            alpha: 32, // $80k / $250k = 32%
+            alpha: 32,
             core: 67,
         }
     });
 
+    const monthlyContribution = useMemo(() => {
+        const contribution = Math.max(0, inputs.annualIncome - inputs.annualExpense) / 12;
+        return contribution;
+    }, [inputs.annualIncome, inputs.annualExpense]);
+
     const projectionData = useMemo(() => {
+        // Inputs are in k$, so calculations will be in k$
         return generateProjectionData(
             inputs.initialCorpus,
-            inputs.monthlyContribution,
+            monthlyContribution,
             inputs.targetNumber
         );
-    }, [inputs.initialCorpus, inputs.monthlyContribution, inputs.targetNumber]);
+    }, [inputs.initialCorpus, monthlyContribution, inputs.targetNumber]);
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">

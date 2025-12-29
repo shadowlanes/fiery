@@ -42,7 +42,7 @@ const ProjectionChart = ({ data, target }) => {
                         />
                         <YAxis
                             stroke="hsl(var(--muted-foreground))"
-                            tickFormatter={(value) => `$${value / 1000}k`}
+                            tickFormatter={(value) => `$${value}k`}
                         />
                         <Tooltip
                             formatter={(value) => formatCurrency(value)}

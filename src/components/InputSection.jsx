@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { formatCurrency } from "@/utils/calculations"
 
 const InputSection = ({ inputs, setInputs }) => {
     const handleChange = (e) => {
@@ -14,15 +15,19 @@ const InputSection = ({ inputs, setInputs }) => {
         setInputs(prev => ({ ...prev, [name]: value[0] }));
     };
 
+    const calculateAbsoluteAllocation = (percentage) => {
+        return (percentage / 100) * inputs.initialCorpus;
+    };
+
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle>Financial Inputs</CardTitle>
+                <CardTitle>Financial Inputs (k$)</CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="targetNumber">Target FIRE Number ($)</Label>
+                        <Label htmlFor="targetNumber">Target FIRE Number (k$)</Label>
                         <Input
                             id="targetNumber"
                             name="targetNumber"
@@ -32,7 +37,7 @@ const InputSection = ({ inputs, setInputs }) => {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="initialCorpus">Initial Corpus ($)</Label>
+                        <Label htmlFor="initialCorpus">Initial Corpus (k$)</Label>
                         <Input
                             id="initialCorpus"
                             name="initialCorpus"
@@ -42,12 +47,22 @@ const InputSection = ({ inputs, setInputs }) => {
                         />
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="monthlyContribution">Monthly Contribution ($)</Label>
+                        <Label htmlFor="annualIncome">Annual Income (k$)</Label>
                         <Input
-                            id="monthlyContribution"
-                            name="monthlyContribution"
+                            id="annualIncome"
+                            name="annualIncome"
                             type="number"
-                            value={inputs.monthlyContribution}
+                            value={inputs.annualIncome}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="annualExpense">Annual Expense (k$)</Label>
+                        <Input
+                            id="annualExpense"
+                            name="annualExpense"
+                            type="number"
+                            value={inputs.annualExpense}
                             onChange={handleChange}
                         />
                     </div>
@@ -59,7 +74,9 @@ const InputSection = ({ inputs, setInputs }) => {
                     <div className="space-y-2">
                         <div className="flex justify-between">
                             <Label>Emergency Fund (%)</Label>
-                            <span className="text-sm text-muted-foreground">{inputs.allocation.emergency}%</span>
+                            <div className="text-sm text-muted-foreground">
+                                {inputs.allocation.emergency}% ({formatCurrency(calculateAbsoluteAllocation(inputs.allocation.emergency))})
+                            </div>
                         </div>
                         <Slider
                             value={[inputs.allocation.emergency]}
@@ -75,7 +92,9 @@ const InputSection = ({ inputs, setInputs }) => {
                     <div className="space-y-2">
                         <div className="flex justify-between">
                             <Label>Alpha Trade (%)</Label>
-                            <span className="text-sm text-muted-foreground">{inputs.allocation.alpha}%</span>
+                            <div className="text-sm text-muted-foreground">
+                                {inputs.allocation.alpha}% ({formatCurrency(calculateAbsoluteAllocation(inputs.allocation.alpha))})
+                            </div>
                         </div>
                         <Slider
                             value={[inputs.allocation.alpha]}
@@ -91,7 +110,9 @@ const InputSection = ({ inputs, setInputs }) => {
                     <div className="space-y-2">
                         <div className="flex justify-between">
                             <Label>Core Engine (%)</Label>
-                            <span className="text-sm text-muted-foreground">{inputs.allocation.core}%</span>
+                            <div className="text-sm text-muted-foreground">
+                                {inputs.allocation.core}% ({formatCurrency(calculateAbsoluteAllocation(inputs.allocation.core))})
+                            </div>
                         </div>
                         <Slider
                             value={[inputs.allocation.core]}
