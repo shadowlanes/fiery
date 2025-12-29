@@ -16,7 +16,7 @@ const Dashboard = () => {
     const handleLogin = async () => {
         await authClient.signIn.social({
             provider: "google",
-            callbackURL: "http://localhost:8100"
+            callbackURL: import.meta.env.VITE_APP_URL || window.location.origin
         });
     };
 
