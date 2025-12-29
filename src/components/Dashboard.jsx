@@ -40,26 +40,30 @@ const Dashboard = () => {
     }, [projectionData, targetNumber]);
 
     return (
-        <div className="max-w-7xl mx-auto space-y-6">
-            <div className="flex flex-col space-y-2">
-                <h1 className="text-4xl font-bold tracking-tight">Personal FIRE Dashboard</h1>
-                <p className="text-muted-foreground">Track your path to Financial Independence.</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1 space-y-6">
-                    <InputSection inputs={inputs} setInputs={setInputs} />
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+            <div className="max-w-7xl mx-auto space-y-8 py-8">
+                <div className="flex flex-col space-y-3 px-4">
+                    <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                        Vantage
+                    </h1>
+                    <p className="text-lg text-muted-foreground">Your view to FIRE.</p>
                 </div>
 
-                <div className="lg:col-span-2 space-y-6">
-                    <ProgressTracker
-                        inputs={inputs}
-                        current={inputs.initialCorpus}
-                        target={targetNumber}
-                        yearsToFire={yearsToFire}
-                        fireYear={fireYear}
-                    />
-                    <ProjectionChart data={projectionData} target={targetNumber} />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
+                    <div className="lg:col-span-1 space-y-6 transition-all duration-300">
+                        <InputSection inputs={inputs} setInputs={setInputs} />
+                    </div>
+
+                    <div className="lg:col-span-2 space-y-6 transition-all duration-300">
+                        <ProgressTracker
+                            inputs={inputs}
+                            current={inputs.initialCorpus}
+                            target={targetNumber}
+                            yearsToFire={yearsToFire}
+                            fireYear={fireYear}
+                        />
+                        <ProjectionChart data={projectionData} target={targetNumber} />
+                    </div>
                 </div>
             </div>
         </div>

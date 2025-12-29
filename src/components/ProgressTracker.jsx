@@ -17,48 +17,53 @@ const ProgressTracker = ({ inputs, current, target, yearsToFire, fireYear }) => 
     };
 
     return (
-        <Card className="border-primary/20 bg-primary/5 shadow-md">
-            <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
-                <CardTitle className="text-lg font-medium text-muted-foreground uppercase tracking-wider">Progress to FIRE</CardTitle>
-                <Button variant="ghost" size="icon" onClick={handleShare} className="h-8 w-8 text-muted-foreground hover:text-foreground">
+        <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-background shadow-lg hover:shadow-xl transition-all duration-300">
+            <CardHeader className="pb-3 flex flex-row items-center justify-between space-y-0">
+                <CardTitle className="text-lg font-semibold text-muted-foreground uppercase tracking-widest">Progress to FIRE</CardTitle>
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleShare}
+                    className="h-9 w-9 text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all duration-200"
+                >
                     <Share2 className="h-4 w-4" />
                     <span className="sr-only">Share Configuration</span>
                 </Button>
             </CardHeader>
-            <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-                    <div className="space-y-4">
+            <CardContent className="pt-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div className="space-y-6">
                         <div>
-                            <div className="flex items-baseline gap-2">
-                                <span className="text-5xl font-bold tracking-tight text-primary">
+                            <div className="flex items-baseline gap-3">
+                                <span className="text-6xl font-extrabold tracking-tight bg-gradient-to-br from-primary to-primary/70 bg-clip-text text-transparent">
                                     {yearsToFire === Infinity ? "∞" : yearsToFire.toFixed(1)}
                                 </span>
-                                <span className="text-xl text-muted-foreground font-medium">years remaining</span>
+                                <span className="text-xl text-muted-foreground font-semibold">years remaining</span>
                             </div>
                             {yearsToFire !== Infinity && (
-                                <div className="text-sm text-muted-foreground mt-1 font-medium">
-                                    Target Date: <span className="text-foreground">Year {fireYear}</span>
+                                <div className="text-sm text-muted-foreground mt-2 font-medium">
+                                    Target Date: <span className="text-foreground font-semibold">Year {fireYear}</span>
                                 </div>
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <div className="flex justify-between text-sm font-medium">
+                        <div className="space-y-3">
+                            <div className="flex justify-between text-sm font-semibold">
                                 <span>{percentage.toFixed(1)}% Complete</span>
-                                <span>{formatCurrency(target)} Goal</span>
+                                <span className="text-primary">{formatCurrency(target)} Goal</span>
                             </div>
-                            <Progress value={percentage} className="h-4 w-full bg-primary/20" indicatorClassName="bg-primary" />
-                            <div className="flex justify-between text-xs text-muted-foreground">
-                                <span>Current: {formatCurrency(current)}</span>
-                                <span>Needs: {formatCurrency(target - current)} more</span>
+                            <Progress value={percentage} className="h-5 w-full bg-primary/20 shadow-inner" indicatorClassName="bg-gradient-to-r from-primary to-primary/80 transition-all duration-500" />
+                            <div className="flex justify-between text-xs text-muted-foreground font-medium">
+                                <span>Current: <span className="text-foreground">{formatCurrency(current)}</span></span>
+                                <span>Needs: <span className="text-foreground">{formatCurrency(target - current)}</span> more</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="hidden md:flex flex-col items-center justify-center p-4 bg-background/50 rounded-lg border border-border/50">
-                        <div className="text-center space-y-1">
-                            <p className="text-sm text-muted-foreground">Freedom Number</p>
-                            <p className="text-3xl font-bold text-foreground">{formatCurrency(target)}</p>
+                    <div className="hidden md:flex flex-col items-center justify-center p-6 bg-gradient-to-br from-background/80 to-background/40 rounded-xl border-2 border-primary/20 shadow-md">
+                        <div className="text-center space-y-2">
+                            <p className="text-sm text-muted-foreground font-semibold uppercase tracking-wider">Freedom Number</p>
+                            <p className="text-4xl font-extrabold bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">{formatCurrency(target)}</p>
                         </div>
                     </div>
                 </div>

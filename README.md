@@ -1,13 +1,13 @@
-# Personal FIRE Dashboard
+# Vantage
 
-A high-impact visual interface to track your progress toward Financial Independence (FIRE). This dashboard allows you to input your current financial metrics (in k$) and visualizes your wealth projection over 20 years under different market conditions (Conservative, Expected, Aggressive).
+**Your view to FIRE** - A sleek, professional dashboard to track your progress toward Financial Independence, Retire Early.
 
 ## Features
 
-- **Financial Inputs**: Track Target FIRE Number, Initial Corpus, Annual Income, and Annual Expense (all in k$).
-- **Real-time Projections**: Visualize portfolio growth with 5%, 7%, and 10% return scenarios.
-- **Asset Allocation**: Manage your portfolio mix (Emergency Fund, Alpha Trade, Core Engine) with absolute value tracking.
-- **Progress Tracking**: See exactly how close you are to your FIRE number.
+- **Financial Inputs**: Track Target FIRE Multiple, Initial Corpus, Annual Income, and Annual Expense (all in k$).
+- **Real-time Projections**: Visualize portfolio growth with customizable return rates for each asset class.
+- **Asset Allocation**: Manage your portfolio mix (Emergency Fund, High Risk, Safe Fund) with absolute value tracking.
+- **Progress Tracking**: See exactly how close you are to your FIRE number with years remaining calculation.
 
 ## Setup Locally
 
