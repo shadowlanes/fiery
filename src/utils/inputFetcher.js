@@ -15,10 +15,14 @@ export const defaultConfig = {
     }
 };
 
-export const getInitialInputs = () => {
-    if (typeof window === 'undefined') return defaultConfig;
+export const getInitialInputs = (queryString) => {
+    // Allow passing queryString for testing, default to window.location.search if available
+    const search = queryString !== undefined ? queryString : (typeof window !== 'undefined' ? window.location.search : '');
 
-    const params = new URLSearchParams(window.location.search);
+    // Handle empty search string
+    if (!search) return defaultConfig;
+
+    const params = new URLSearchParams(search);
     const q = params.get('q');
 
     if (q) {
@@ -40,13 +44,21 @@ export const getInitialInputs = () => {
     return defaultConfig;
 };
 
-export const getShareUrl = (inputs) => {
-    if (typeof window === 'undefined') return '';
+export const getShareUrl = (inputs, baseUrl) => {
+    // Allow passing baseUrl for testing, default to window.location.href
+    const currentUrl = baseUrl !== undefined ? baseUrl : (typeof window !== 'undefined' ? window.location.href : '');
+
+    if (!currentUrl) return '';
 
     const json = JSON.stringify(inputs);
     const encoded = encodeURIComponent(json);
-    const url = new URL(window.location.href);
-    url.searchParams.set('q', encoded);
 
-    return url.toString();
+    try {
+        const url = new URL(currentUrl);
+        url.searchParams.set('q', encoded);
+        return url.toString();
+    } catch (e) {
+        console.error("Invalid base URL", e);
+        return '';
+    }
 };
