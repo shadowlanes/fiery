@@ -7,7 +7,7 @@ import { generateProjectionData } from '@/utils/calculations'
 
 const Dashboard = () => {
     const [inputs, setInputs] = useState({
-        targetNumber: 2250, // k$
+        targetMultiple: 25, // x annual expense
         initialCorpus: 250, // k$
         annualIncome: 150, // k$ (example default)
         annualExpense: 60, // k$ (example default)
@@ -23,14 +23,18 @@ const Dashboard = () => {
         return contribution;
     }, [inputs.annualIncome, inputs.annualExpense]);
 
+    const targetNumber = useMemo(() => {
+        return inputs.targetMultiple * inputs.annualExpense;
+    }, [inputs.targetMultiple, inputs.annualExpense]);
+
     const projectionData = useMemo(() => {
         // Inputs are in k$, so calculations will be in k$
         return generateProjectionData(
             inputs.initialCorpus,
             monthlyContribution,
-            inputs.targetNumber
+            targetNumber
         );
-    }, [inputs.initialCorpus, monthlyContribution, inputs.targetNumber]);
+    }, [inputs.initialCorpus, monthlyContribution, targetNumber]);
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
@@ -42,11 +46,11 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1 space-y-6">
                     <InputSection inputs={inputs} setInputs={setInputs} />
-                    <ProgressTracker current={inputs.initialCorpus} target={inputs.targetNumber} />
+                    <ProgressTracker current={inputs.initialCorpus} target={targetNumber} />
                 </div>
 
                 <div className="lg:col-span-2">
-                    <ProjectionChart data={projectionData} target={inputs.targetNumber} />
+                    <ProjectionChart data={projectionData} target={targetNumber} />
                 </div>
             </div>
         </div>

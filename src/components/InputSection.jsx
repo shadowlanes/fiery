@@ -27,12 +27,12 @@ const InputSection = ({ inputs, setInputs }) => {
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <Label htmlFor="targetNumber">Target FIRE Number (k$)</Label>
+                        <Label htmlFor="targetMultiple">Target FIRE Multiple (x)</Label>
                         <Input
-                            id="targetNumber"
-                            name="targetNumber"
+                            id="targetMultiple"
+                            name="targetMultiple"
                             type="number"
-                            value={inputs.targetNumber}
+                            value={inputs.targetMultiple}
                             onChange={handleChange}
                         />
                     </div>
