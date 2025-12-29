@@ -31,7 +31,7 @@ const ProjectionChart = ({ data, target }) => {
     };
 
     return (
-        <Card className="h-full">
+        <Card className="h-fit">
             <CardHeader>
                 <CardTitle>Wealth Projection</CardTitle>
             </CardHeader>
