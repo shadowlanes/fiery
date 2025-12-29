@@ -33,15 +33,12 @@ const Dashboard = () => {
     }, [inputs.targetMultiple, inputs.annualExpense]);
 
     const projectionData = useMemo(() => {
-        return generateProjectionData(
-            inputs.initialCorpus,
-            monthlyContribution,
-            targetNumber,
-            inputs.allocation,
-            inputs.rates,
-            inputs.emergencyCorpus
-        );
-    }, [inputs.initialCorpus, monthlyContribution, targetNumber, inputs.allocation, inputs.rates, inputs.emergencyCorpus]);
+        return generateProjectionData({
+            inputs: inputs,
+            monthlyContribution: monthlyContribution,
+            targetNumber: targetNumber
+        });
+    }, [inputs, monthlyContribution, targetNumber]);
 
     const { yearsToFire, fireYear } = useMemo(() => {
         if (projectionData.length === 0) return { yearsToFire: 0, fireYear: new Date().getFullYear() };

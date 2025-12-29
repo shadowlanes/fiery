@@ -2,7 +2,11 @@
  * Calculates the future value of an investment with monthly contributions.
  * Formula: A = P(1 + r/n)^(nt) + PMT * ((1 + r/n)^(nt) - 1) / (r/n)
  */
-export const calculateCompoundInterest = (principal, monthlyContribution, annualRate, years) => {
+/**
+ * Calculates the future value of an investment with monthly contributions.
+ * Formula: A = P(1 + r/n)^(nt) + PMT * ((1 + r/n)^(nt) - 1) / (r/n)
+ */
+const calculateCompoundInterest = (principal, monthlyContribution, annualRate, years) => {
     const r = annualRate;
     const n = 12;
     const t = years;
@@ -21,10 +25,13 @@ export const calculateCompoundInterest = (principal, monthlyContribution, annual
  * Generates projection data based on weighted buckets.
  * Stops when the total portfolio value reaches the target number.
  * 
- * emergencyCorpus: Fixed amount in k$
- * allocation: { alpha: %, core: % } (sum 100)
+ * param {Object} config - The configuration object
+ * param {Object} config.inputs - User inputs { initialCorpus, emergencyCorpus, allocation, rates }
+ * param {number} config.monthlyContribution - Monthly contribution amount
+ * param {number} config.targetNumber - Target FIRE number
  */
-export const generateProjectionData = (initialCorpus, monthlyContribution, targetNumber, allocation, rates, emergencyCorpus) => {
+export const generateProjectionData = ({ inputs, monthlyContribution, targetNumber }) => {
+    const { initialCorpus, emergencyCorpus, allocation, rates } = inputs;
     const data = [];
     let year = 0;
 
