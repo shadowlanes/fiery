@@ -20,19 +20,26 @@ export const calculateCompoundInterest = (principal, monthlyContribution, annual
 /**
  * Generates projection data based on weighted buckets.
  * Stops when the total portfolio value reaches the target number.
+ * 
+ * emergencyCorpus: Fixed amount in k$
+ * allocation: { alpha: %, core: % } (sum 100)
  */
-export const generateProjectionData = (initialCorpus, monthlyContribution, targetNumber, allocation, rates) => {
+export const generateProjectionData = (initialCorpus, monthlyContribution, targetNumber, allocation, rates, emergencyCorpus) => {
     const data = [];
     let year = 0;
-    let total = initialCorpus;
 
     // Initial values for each bucket
-    const initialEmergency = initialCorpus * (allocation.emergency / 100);
-    const initialAlpha = initialCorpus * (allocation.alpha / 100);
-    const initialCore = initialCorpus * (allocation.core / 100);
+    // Emergency fund is fixed at start
+    const initialEmergency = emergencyCorpus;
 
-    // Monthly contributions for each bucket
-    const monthlyEmergency = monthlyContribution * (allocation.emergency / 100);
+    // Investable corpus is the remainder
+    const investableCorpus = Math.max(0, initialCorpus - emergencyCorpus);
+
+    const initialAlpha = investableCorpus * (allocation.alpha / 100);
+    const initialCore = investableCorpus * (allocation.core / 100);
+
+    // Monthly contributions for each bucket (0 for emergency)
+    const monthlyEmergency = 0;
     const monthlyAlpha = monthlyContribution * (allocation.alpha / 100);
     const monthlyCore = monthlyContribution * (allocation.core / 100);
 
@@ -43,6 +50,8 @@ export const generateProjectionData = (initialCorpus, monthlyContribution, targe
 
     // Max years to prevent infinite loop if target is unreachable
     const MAX_YEARS = 100;
+
+    let total = initialEmergency + initialAlpha + initialCore;
 
     while (total < targetNumber && year <= MAX_YEARS) {
         const emergencyValue = calculateCompoundInterest(initialEmergency, monthlyEmergency, rateEmergency, year);

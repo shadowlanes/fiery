@@ -9,12 +9,12 @@ const Dashboard = () => {
     const [inputs, setInputs] = useState({
         targetMultiple: 25, // x annual expense
         initialCorpus: 250, // k$
+        emergencyCorpus: 40, // k$
         annualIncome: 150, // k$ (example default)
         annualExpense: 60, // k$ (example default)
         allocation: {
-            emergency: 1,
             alpha: 32,
-            core: 67,
+            core: 68,
         },
         rates: {
             emergency: 1,
@@ -38,9 +38,10 @@ const Dashboard = () => {
             monthlyContribution,
             targetNumber,
             inputs.allocation,
-            inputs.rates
+            inputs.rates,
+            inputs.emergencyCorpus
         );
-    }, [inputs.initialCorpus, monthlyContribution, targetNumber, inputs.allocation, inputs.rates]);
+    }, [inputs.initialCorpus, monthlyContribution, targetNumber, inputs.allocation, inputs.rates, inputs.emergencyCorpus]);
 
     const { yearsToFire, fireYear } = useMemo(() => {
         if (projectionData.length === 0) return { yearsToFire: 0, fireYear: new Date().getFullYear() };

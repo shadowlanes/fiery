@@ -11,17 +11,6 @@ const InputSection = ({ inputs, setInputs }) => {
         setInputs(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
     };
 
-    const handleAllocationChange = (name, value) => {
-        setInputs(prev => ({
-            ...prev,
-            allocation: { ...prev.allocation, [name]: value }
-        }));
-    };
-
-    const calculateAbsoluteAllocation = (percentage) => {
-        return (percentage / 100) * inputs.initialCorpus;
-    };
-
     return (
         <Card className="w-full">
             <CardHeader>
@@ -75,31 +64,38 @@ const InputSection = ({ inputs, setInputs }) => {
                     <h3 className="font-semibold">Asset Allocation</h3>
 
                     <div className="space-y-2">
-                        <div className="flex justify-between">
-                            <Label>Emergency Fund (%)</Label>
-                            <div className="text-sm text-muted-foreground">
-                                {inputs.allocation.emergency}% ({formatCurrency(calculateAbsoluteAllocation(inputs.allocation.emergency))})
-                            </div>
-                        </div>
-                        <Slider
-                            value={[inputs.allocation.emergency]}
-                            onValueChange={(value) => handleAllocationChange('emergency', value[0])}
-                            max={100}
-                            step={1}
-                            className="[&>span:first-child>span]:bg-[hsl(var(--chart-1))]"
+                        <Label htmlFor="emergencyCorpus">Emergency Fund (Fixed k$)</Label>
+                        <Input
+                            id="emergencyCorpus"
+                            name="emergencyCorpus"
+                            type="number"
+                            value={inputs.emergencyCorpus}
+                            onChange={handleChange}
+                            className="bg-[hsl(var(--chart-1))]/10 border-[hsl(var(--chart-1))]"
                         />
+                    </div>
+
+                    <div className="pt-2">
+                        <Label className="text-sm text-muted-foreground">Investable: {formatCurrency(Math.max(0, inputs.initialCorpus - inputs.emergencyCorpus))}</Label>
                     </div>
 
                     <div className="space-y-2">
                         <div className="flex justify-between">
                             <Label>Alpha Trade (%)</Label>
                             <div className="text-sm text-muted-foreground">
-                                {inputs.allocation.alpha}% ({formatCurrency(calculateAbsoluteAllocation(inputs.allocation.alpha))})
+                                {inputs.allocation.alpha}% ({formatCurrency((Math.max(0, inputs.initialCorpus - inputs.emergencyCorpus) * inputs.allocation.alpha) / 100)})
                             </div>
                         </div>
                         <Slider
                             value={[inputs.allocation.alpha]}
-                            onValueChange={(value) => handleAllocationChange('alpha', value[0])}
+                            onValueChange={(value) => {
+                                const alpha = value[0];
+                                const core = 100 - alpha;
+                                setInputs(prev => ({
+                                    ...prev,
+                                    allocation: { alpha, core }
+                                }));
+                            }}
                             max={100}
                             step={1}
                             className="[&>span:first-child>span]:bg-[hsl(var(--chart-3))]"
@@ -110,12 +106,19 @@ const InputSection = ({ inputs, setInputs }) => {
                         <div className="flex justify-between">
                             <Label>Core Engine (%)</Label>
                             <div className="text-sm text-muted-foreground">
-                                {inputs.allocation.core}% ({formatCurrency(calculateAbsoluteAllocation(inputs.allocation.core))})
+                                {inputs.allocation.core}% ({formatCurrency((Math.max(0, inputs.initialCorpus - inputs.emergencyCorpus) * inputs.allocation.core) / 100)})
                             </div>
                         </div>
                         <Slider
                             value={[inputs.allocation.core]}
-                            onValueChange={(value) => handleAllocationChange('core', value[0])}
+                            onValueChange={(value) => {
+                                const core = value[0];
+                                const alpha = 100 - core;
+                                setInputs(prev => ({
+                                    ...prev,
+                                    allocation: { alpha, core }
+                                }));
+                            }}
                             max={100}
                             step={1}
                             className="[&>span:first-child>span]:bg-[hsl(var(--chart-2))]"
