@@ -3,7 +3,7 @@ import { Progress } from "@/components/ui/progress"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { formatCurrency } from "@/utils/calculations"
 
-const ProgressTracker = ({ current, target }) => {
+const ProgressTracker = ({ current, target, yearsToFire, fireYear }) => {
     const percentage = Math.min(100, Math.max(0, (current / target) * 100));
 
     return (
@@ -19,6 +19,17 @@ const ProgressTracker = ({ current, target }) => {
                         <span className="text-muted-foreground">Target: {formatCurrency(target)}</span>
                     </div>
                     <Progress value={percentage} className="h-3" />
+                    <div className="text-center text-sm text-muted-foreground">
+                        {yearsToFire === Infinity ? (
+                            "Unreachable with current inputs"
+                        ) : yearsToFire <= 0 ? (
+                            "FIRE Achieved!"
+                        ) : (
+                            <span>
+                                <span className="font-semibold text-foreground">{yearsToFire.toFixed(1)}</span> years remaining (Year {fireYear})
+                            </span>
+                        )}
+                    </div>
                 </div>
             </CardContent>
         </Card>

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import InputSection from './InputSection'
 import ProgressTracker from './ProgressTracker'
 import ProjectionChart from './ProjectionChart'
-import { generateProjectionData } from '@/utils/calculations'
+import { generateProjectionData, calculateYearsToTarget } from '@/utils/calculations'
 
 const Dashboard = () => {
     const [inputs, setInputs] = useState({
@@ -27,6 +27,20 @@ const Dashboard = () => {
         return inputs.targetMultiple * inputs.annualExpense;
     }, [inputs.targetMultiple, inputs.annualExpense]);
 
+    const { yearsToFire, fireYear } = useMemo(() => {
+        const years = calculateYearsToTarget(
+            inputs.initialCorpus,
+            monthlyContribution,
+            0.07, // Expected rate
+            targetNumber
+        );
+        const currentYear = new Date().getFullYear();
+        return {
+            yearsToFire: years,
+            fireYear: Math.floor(currentYear + years)
+        };
+    }, [inputs.initialCorpus, monthlyContribution, targetNumber]);
+
     const projectionData = useMemo(() => {
         // Inputs are in k$, so calculations will be in k$
         return generateProjectionData(
@@ -46,7 +60,12 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1 space-y-6">
                     <InputSection inputs={inputs} setInputs={setInputs} />
-                    <ProgressTracker current={inputs.initialCorpus} target={targetNumber} />
+                    <ProgressTracker
+                        current={inputs.initialCorpus}
+                        target={targetNumber}
+                        yearsToFire={yearsToFire}
+                        fireYear={fireYear}
+                    />
                 </div>
 
                 <div className="lg:col-span-2">

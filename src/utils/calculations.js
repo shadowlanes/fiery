@@ -25,52 +25,35 @@ export const calculateCompoundInterest = (principal, monthlyContribution, annual
 };
 
 /**
- * Calculates the weighted average return based on asset allocation.
- * @param {Object} allocation - { emergencyFund: number, alphaTrade: number, coreEngine: number } (percentages as decimals or values?)
- * The PRD says:
- * Emergency Fund: 1% (Low yield/Cash)
- * Alpha Trade: (Current $80k equivalent) - Wait, input says $80k equivalent, but we need percentage for weighted return?
- * Actually, the PRD says: "Weighted Return Logic: (0.01 * EF yield) + (%Alpha * Alpha yield) + (%Core * Core yield)"
- * But wait, EF is 1% of allocation? Or EF yield is 1%?
- * PRD: "Emergency Fund: 1% (Low yield/Cash)" -> This implies EF *Allocation* is 1%? Or Yield is 1%?
- * "Weighted Return Logic: (0.01 * EF yield) + ..." -> 0.01 looks like allocation if EF yield is separate.
- * Let's re-read: "Emergency Fund: 1% (Low yield/Cash)". This likely means the yield is 1%.
- * "Alpha Trade: (Current $80k equivalent)".
- * "Core Engine: (Remaining balance)".
- * 
- * Let's assume the user inputs the VALUES for these, and we calculate the percentages.
- * Or the user inputs percentages?
- * PRD says "Asset Allocation %: Emergency Fund: 1% ...".
- * But then "Alpha Trade: (Current $80k equivalent)".
- * This is ambiguous.
- * 
- * Let's assume:
- * - Emergency Fund Yield: 1% (Fixed?)
- * - Alpha Trade Yield: ? (Maybe user input or fixed assumption for "Aggressive"?)
- * - Core Engine Yield: ?
- * 
- * Actually, the PRD says:
- * "Multi-Rate Projection: Calculate timelines for three scenarios: Conservative (5%), Expected (7%), and Aggressive (10%)."
- * And "Weighted Return Logic: Return should be calculated as: (0.01×EF yield)+(%Alpha×Alpha yield)+(%Core×Core yield)."
- * 
- * This implies we need to calculate a CUSTOM weighted return based on the user's specific portfolio mix, 
- * OR we just use the 5%, 7%, 10% as the global rates for the 3 lines.
- * 
- * "The centerpiece is a Stacked Area Chart ... showing ... Three colored lines showing the path for each return rate (5%, 7%, 10%)."
- * This suggests the 5/7/10 are the rates used for the lines.
- * 
- * So what is the "Weighted Return Logic" for?
- * Maybe it's to show the "Current" projected path based on actual allocation?
- * "Shaded area for the 'Current Progress' vs 'Future Forecast'."
- * 
- * Let's implement a function that takes the total portfolio value and breakdown, and yields for each bucket, to get a weighted rate.
- * But for the main graph, we need 5%, 7%, 10%.
- * 
- * Let's stick to the 3 scenarios for now as primary.
- * And maybe add a "Custom" or "Current" scenario if we have the yields.
- * 
- * For now, I will implement the projection generator for the 3 fixed rates.
+ * Calculates the number of years to reach a target amount.
+ * Solves for t in the compound interest formula.
+ * Formula derived from A = P(1+r/n)^(nt) + PMT * ((1+r/n)^(nt) - 1) / (r/n)
+ * Let R = 1 + r/n
+ * A = P * R^(nt) + PMT * (R^(nt) - 1) / (r/n)
+ * A * (r/n) = P * (r/n) * R^(nt) + PMT * R^(nt) - PMT
+ * A * (r/n) + PMT = R^(nt) * (P * (r/n) + PMT)
+ * R^(nt) = (A * (r/n) + PMT) / (P * (r/n) + PMT)
+ * nt = ln((A * (r/n) + PMT) / (P * (r/n) + PMT)) / ln(R)
+ * t = ln(...) / (n * ln(R))
  */
+export const calculateYearsToTarget = (principal, monthlyContribution, annualRate, target) => {
+    if (principal >= target) return 0;
+
+    const r = annualRate;
+    const n = 12;
+
+    // If rate is 0, simple linear equation: target = principal + (monthly * 12 * t)
+    if (r === 0) {
+        if (monthlyContribution <= 0) return Infinity; // Never reach if no growth and no contribution
+        return (target - principal) / (monthlyContribution * 12);
+    }
+
+    const numerator = Math.log((target * (r / n) + monthlyContribution) / (principal * (r / n) + monthlyContribution));
+    const denominator = n * Math.log(1 + r / n);
+
+    const years = numerator / denominator;
+    return Math.max(0, years);
+};
 
 export const generateProjectionData = (initialCorpus, monthlyContribution, targetNumber, years = 20) => {
     const data = [];
