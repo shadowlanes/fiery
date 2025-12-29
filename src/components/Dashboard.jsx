@@ -66,15 +66,15 @@ const Dashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-1 space-y-6">
                     <InputSection inputs={inputs} setInputs={setInputs} />
+                </div>
+
+                <div className="lg:col-span-2 space-y-6">
                     <ProgressTracker
                         current={inputs.initialCorpus}
                         target={targetNumber}
                         yearsToFire={yearsToFire}
                         fireYear={fireYear}
                     />
-                </div>
-
-                <div className="lg:col-span-2">
                     <ProjectionChart data={projectionData} target={targetNumber} />
                 </div>
             </div>
