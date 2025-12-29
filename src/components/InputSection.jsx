@@ -86,6 +86,7 @@ const InputSection = ({ inputs, setInputs }) => {
                             onValueChange={(value) => handleAllocationChange('emergency', value[0])}
                             max={100}
                             step={1}
+                            className="[&>span:first-child>span]:bg-[hsl(var(--chart-1))]"
                         />
                     </div>
 
@@ -101,6 +102,7 @@ const InputSection = ({ inputs, setInputs }) => {
                             onValueChange={(value) => handleAllocationChange('alpha', value[0])}
                             max={100}
                             step={1}
+                            className="[&>span:first-child>span]:bg-[hsl(var(--chart-3))]"
                         />
                     </div>
 
@@ -116,6 +118,7 @@ const InputSection = ({ inputs, setInputs }) => {
                             onValueChange={(value) => handleAllocationChange('core', value[0])}
                             max={100}
                             step={1}
+                            className="[&>span:first-child>span]:bg-[hsl(var(--chart-2))]"
                         />
                     </div>
                 </div>

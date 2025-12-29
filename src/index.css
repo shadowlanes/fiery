@@ -79,6 +79,14 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0.5rem;
+
+    /* Chart Colors */
+    --chart-1: 160 84% 39%;
+    /* Emerald */
+    --chart-2: 217 91% 60%;
+    /* Blue */
+    --chart-3: 38 92% 50%;
+    /* Amber */
   }
 
   .dark {
