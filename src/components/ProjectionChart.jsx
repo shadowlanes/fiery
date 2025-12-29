@@ -60,7 +60,7 @@ const ProjectionChart = ({ data, target }) => {
                             <Legend verticalAlign="bottom" height={36} />
                             <ReferenceLine y={target} label="FIRE Target" stroke="hsl(var(--destructive))" strokeDasharray="3 3" />
 
-                            {/* Stack order: Emergency (bottom) -> Core -> Alpha (top) */}
+                            {/* Stack order: Emergency (bottom) -> Safe -> High Risk (top) */}
                             <Area
                                 type="monotone"
                                 dataKey="emergency"
@@ -72,21 +72,21 @@ const ProjectionChart = ({ data, target }) => {
                             />
                             <Area
                                 type="monotone"
-                                dataKey="core"
+                                dataKey="safe"
                                 stackId="1"
                                 stroke="hsl(var(--chart-2))"
                                 fill="hsl(var(--chart-2))"
                                 fillOpacity={0.9}
-                                name="Core Engine"
+                                name="Safe Fund"
                             />
                             <Area
                                 type="monotone"
-                                dataKey="alpha"
+                                dataKey="highRisk"
                                 stackId="1"
                                 stroke="hsl(var(--chart-3))"
                                 fill="hsl(var(--chart-3))"
                                 fillOpacity={0.9}
-                                name="Alpha Trade"
+                                name="High Risk"
                             />
                         </AreaChart>
                     </ResponsiveContainer>

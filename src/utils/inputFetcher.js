@@ -5,13 +5,13 @@ export const defaultConfig = {
     annualIncome: 150, // k$ (example default)
     annualExpense: 60, // k$ (example default)
     allocation: {
-        alpha: 32,
-        core: 68,
+        highRisk: 32,
+        safe: 68,
     },
     rates: {
         emergency: 1,
-        alpha: 10,
-        core: 6,
+        highRisk: 10,
+        safe: 6,
     }
 };
 

@@ -42,36 +42,36 @@ export const generateProjectionData = ({ inputs, monthlyContribution, targetNumb
     // Investable corpus is the remainder
     const investableCorpus = Math.max(0, initialCorpus - emergencyCorpus);
 
-    const initialAlpha = investableCorpus * (allocation.alpha / 100);
-    const initialCore = investableCorpus * (allocation.core / 100);
+    const initialHighRisk = investableCorpus * (allocation.highRisk / 100);
+    const initialSafe = investableCorpus * (allocation.safe / 100);
 
     // Monthly contributions for each bucket (0 for emergency)
     const monthlyEmergency = 0;
-    const monthlyAlpha = monthlyContribution * (allocation.alpha / 100);
-    const monthlyCore = monthlyContribution * (allocation.core / 100);
+    const monthlyHighRisk = monthlyContribution * (allocation.highRisk / 100);
+    const monthlySafe = monthlyContribution * (allocation.safe / 100);
 
     // Rates (convert percentage to decimal)
     const rateEmergency = rates.emergency / 100;
-    const rateAlpha = rates.alpha / 100;
-    const rateCore = rates.core / 100;
+    const rateHighRisk = rates.highRisk / 100;
+    const rateSafe = rates.safe / 100;
 
     // Max years to prevent infinite loop if target is unreachable
     const MAX_YEARS = 100;
 
-    let total = initialEmergency + initialAlpha + initialCore;
+    let total = initialEmergency + initialHighRisk + initialSafe;
 
     while (total < targetNumber && year <= MAX_YEARS) {
         const emergencyValue = calculateCompoundInterest(initialEmergency, monthlyEmergency, rateEmergency, year);
-        const alphaValue = calculateCompoundInterest(initialAlpha, monthlyAlpha, rateAlpha, year);
-        const coreValue = calculateCompoundInterest(initialCore, monthlyCore, rateCore, year);
+        const highRiskValue = calculateCompoundInterest(initialHighRisk, monthlyHighRisk, rateHighRisk, year);
+        const safeValue = calculateCompoundInterest(initialSafe, monthlySafe, rateSafe, year);
 
-        total = emergencyValue + alphaValue + coreValue;
+        total = emergencyValue + highRiskValue + safeValue;
 
         data.push({
             year,
             emergency: emergencyValue,
-            alpha: alphaValue,
-            core: coreValue,
+            highRisk: highRiskValue,
+            safe: safeValue,
             total,
             target: targetNumber,
         });

@@ -81,19 +81,19 @@ const InputSection = ({ inputs, setInputs }) => {
 
                     <div className="space-y-2">
                         <div className="flex justify-between">
-                            <Label>Alpha Trade (%)</Label>
+                            <Label>High Risk (%)</Label>
                             <div className="text-sm text-muted-foreground">
-                                {inputs.allocation.alpha}% ({formatCurrency((Math.max(0, inputs.initialCorpus - inputs.emergencyCorpus) * inputs.allocation.alpha) / 100)})
+                                {inputs.allocation.highRisk}% ({formatCurrency((Math.max(0, inputs.initialCorpus - inputs.emergencyCorpus) * inputs.allocation.highRisk) / 100)})
                             </div>
                         </div>
                         <Slider
-                            value={[inputs.allocation.alpha]}
+                            value={[inputs.allocation.highRisk]}
                             onValueChange={(value) => {
-                                const alpha = value[0];
-                                const core = 100 - alpha;
+                                const highRisk = value[0];
+                                const safe = 100 - highRisk;
                                 setInputs(prev => ({
                                     ...prev,
-                                    allocation: { alpha, core }
+                                    allocation: { highRisk, safe }
                                 }));
                             }}
                             max={100}
@@ -104,19 +104,19 @@ const InputSection = ({ inputs, setInputs }) => {
 
                     <div className="space-y-2">
                         <div className="flex justify-between">
-                            <Label>Core Engine (%)</Label>
+                            <Label>Safe Fund (%)</Label>
                             <div className="text-sm text-muted-foreground">
-                                {inputs.allocation.core}% ({formatCurrency((Math.max(0, inputs.initialCorpus - inputs.emergencyCorpus) * inputs.allocation.core) / 100)})
+                                {inputs.allocation.safe}% ({formatCurrency((Math.max(0, inputs.initialCorpus - inputs.emergencyCorpus) * inputs.allocation.safe) / 100)})
                             </div>
                         </div>
                         <Slider
-                            value={[inputs.allocation.core]}
+                            value={[inputs.allocation.safe]}
                             onValueChange={(value) => {
-                                const core = value[0];
-                                const alpha = 100 - core;
+                                const safe = value[0];
+                                const highRisk = 100 - safe;
                                 setInputs(prev => ({
                                     ...prev,
-                                    allocation: { alpha, core }
+                                    allocation: { highRisk, safe }
                                 }));
                             }}
                             max={100}
@@ -146,26 +146,26 @@ const InputSection = ({ inputs, setInputs }) => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="rateAlpha">Alpha Trade</Label>
+                                <Label htmlFor="rateHighRisk">High Risk</Label>
                                 <Input
-                                    id="rateAlpha"
+                                    id="rateHighRisk"
                                     type="number"
-                                    value={inputs.rates.alpha}
+                                    value={inputs.rates.highRisk}
                                     onChange={(e) => setInputs(prev => ({
                                         ...prev,
-                                        rates: { ...prev.rates, alpha: Number(e.target.value) }
+                                        rates: { ...prev.rates, highRisk: Number(e.target.value) }
                                     }))}
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="rateCore">Core Engine</Label>
+                                <Label htmlFor="rateSafe">Safe Fund</Label>
                                 <Input
-                                    id="rateCore"
+                                    id="rateSafe"
                                     type="number"
-                                    value={inputs.rates.core}
+                                    value={inputs.rates.safe}
                                     onChange={(e) => setInputs(prev => ({
                                         ...prev,
-                                        rates: { ...prev.rates, core: Number(e.target.value) }
+                                        rates: { ...prev.rates, safe: Number(e.target.value) }
                                     }))}
                                 />
                             </div>

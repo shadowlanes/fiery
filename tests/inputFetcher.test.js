@@ -18,7 +18,7 @@ describe('inputFetcher', () => {
                 targetMultiple: 30,
                 initialCorpus: 300,
                 emergencyCorpus: 50,
-                rates: { emergency: 2, alpha: 12, core: 7 }
+                rates: { emergency: 2, highRisk: 12, safe: 7 }
             };
             const encoded = encodeURIComponent(JSON.stringify(customInputs));
             const queryString = `?q=${encoded}`;
