@@ -5,9 +5,24 @@ import ProgressTracker from './ProgressTracker'
 import ProjectionChart from './ProjectionChart'
 import { getInitialInputs } from '@/utils/inputFetcher'
 import { generateProjectionData } from '@/utils/calculations'
+import { authClient } from '@/lib/auth-client'
+import { LogIn, User, Loader2 } from 'lucide-react'
+import { Button } from './ui/button'
 
 const Dashboard = () => {
     const [inputs, setInputs] = useState(getInitialInputs);
+    const { data: session, isPending } = authClient.useSession();
+
+    const handleLogin = async () => {
+        await authClient.signIn.social({
+            provider: "google",
+            callbackURL: "http://localhost:8100"
+        });
+    };
+
+    const handleLogout = async () => {
+        await authClient.signOut();
+    };
 
     const monthlyContribution = useMemo(() => {
         const contribution = Math.max(0, inputs.annualIncome - inputs.annualExpense) / 12;
@@ -42,18 +57,58 @@ const Dashboard = () => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
             <div className="max-w-7xl mx-auto space-y-8 py-8">
-                <div className="flex flex-col space-y-4 px-4 items-center md:items-start">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-primary/10 rounded-xl border border-primary/20 shadow-inner">
-                            <Telescope className="h-8 w-8 text-primary" />
+                <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-6 px-4">
+                    <div className="flex flex-col space-y-4 items-center md:items-start">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-primary/10 rounded-xl border border-primary/20 shadow-inner">
+                                <Telescope className="h-8 w-8 text-primary" />
+                            </div>
+                            <h1 className="text-6xl font-black tracking-tighter bg-gradient-to-r from-white via-white/90 to-white/60 bg-clip-text text-transparent font-['Outfit'] italic">
+                                VANTAGE
+                            </h1>
                         </div>
-                        <h1 className="text-6xl font-black tracking-tighter bg-gradient-to-r from-white via-white/90 to-white/60 bg-clip-text text-transparent font-['Outfit'] italic">
-                            VANTAGE
-                        </h1>
+                        <p className="text-xl text-muted-foreground/80 font-light tracking-widest uppercase pl-1">
+                            Your view to <span className="text-primary font-bold">FIRE</span>
+                        </p>
                     </div>
-                    <p className="text-xl text-muted-foreground/80 font-light tracking-widest uppercase pl-1">
-                        Your view to <span className="text-primary font-bold">FIRE</span>
-                    </p>
+
+                    <div className="flex items-center gap-4">
+                        {isPending ? (
+                            <div className="h-10 w-40 bg-slate-800/50 animate-pulse rounded-full border border-white/5 flex items-center justify-center">
+                                <Loader2 className="h-4 w-4 text-primary animate-spin" />
+                            </div>
+                        ) : session ? (
+                            <div className="flex items-center gap-4 bg-slate-800/40 p-2 pl-5 rounded-full border border-white/10 backdrop-blur-xl shadow-2xl group transition-all duration-300 hover:bg-slate-800/60">
+                                <div className="flex flex-col items-end">
+                                    <span className="text-sm font-semibold text-white/90 tracking-tight">{session.user.name}</span>
+                                    <button
+                                        onClick={handleLogout}
+                                        className="text-[10px] text-muted-foreground hover:text-primary transition-colors uppercase tracking-[0.2em] font-black"
+                                    >
+                                        Log Out
+                                    </button>
+                                </div>
+                                <div className="h-10 w-10 rounded-full border-2 border-primary/30 overflow-hidden bg-slate-700 shadow-inner group-hover:border-primary/60 transition-colors">
+                                    {session.user.image ? (
+                                        <img src={session.user.image} alt={session.user.name} className="h-full w-full object-cover" />
+                                    ) : (
+                                        <div className="h-full w-full flex items-center justify-center">
+                                            <User className="h-5 w-5 text-primary" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <Button
+                                onClick={handleLogin}
+                                variant="outline"
+                                className="bg-primary/5 border-primary/20 hover:bg-primary/10 text-white gap-3 rounded-full px-8 py-6 text-base font-bold tracking-wide transition-all duration-300 shadow-lg hover:shadow-primary/5 active:scale-95"
+                            >
+                                <LogIn className="h-5 w-5 text-primary" />
+                                Sign In
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
