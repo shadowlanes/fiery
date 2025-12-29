@@ -134,7 +134,7 @@ const InputSection = ({ inputs, setInputs }) => {
                         </summary>
                         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="rateEmergency">Emergency Rate (%)</Label>
+                                <Label htmlFor="rateEmergency">Emergency</Label>
                                 <Input
                                     id="rateEmergency"
                                     type="number"
@@ -146,7 +146,7 @@ const InputSection = ({ inputs, setInputs }) => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="rateAlpha">Alpha Rate (%)</Label>
+                                <Label htmlFor="rateAlpha">Alpha Trade</Label>
                                 <Input
                                     id="rateAlpha"
                                     type="number"
@@ -158,7 +158,7 @@ const InputSection = ({ inputs, setInputs }) => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="rateCore">Core Rate (%)</Label>
+                                <Label htmlFor="rateCore">Core Engine</Label>
                                 <Input
                                     id="rateCore"
                                     type="number"
