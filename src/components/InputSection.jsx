@@ -11,8 +11,11 @@ const InputSection = ({ inputs, setInputs }) => {
         setInputs(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
     };
 
-    const handleSliderChange = (name, value) => {
-        setInputs(prev => ({ ...prev, [name]: value[0] }));
+    const handleAllocationChange = (name, value) => {
+        setInputs(prev => ({
+            ...prev,
+            allocation: { ...prev.allocation, [name]: value }
+        }));
     };
 
     const calculateAbsoluteAllocation = (percentage) => {
@@ -80,12 +83,9 @@ const InputSection = ({ inputs, setInputs }) => {
                         </div>
                         <Slider
                             value={[inputs.allocation.emergency]}
+                            onValueChange={(value) => handleAllocationChange('emergency', value[0])}
                             max={100}
                             step={1}
-                            onValueChange={(val) => setInputs(prev => ({
-                                ...prev,
-                                allocation: { ...prev.allocation, emergency: val[0] }
-                            }))}
                         />
                     </div>
 
@@ -98,12 +98,9 @@ const InputSection = ({ inputs, setInputs }) => {
                         </div>
                         <Slider
                             value={[inputs.allocation.alpha]}
+                            onValueChange={(value) => handleAllocationChange('alpha', value[0])}
                             max={100}
                             step={1}
-                            onValueChange={(val) => setInputs(prev => ({
-                                ...prev,
-                                allocation: { ...prev.allocation, alpha: val[0] }
-                            }))}
                         />
                     </div>
 
@@ -116,14 +113,58 @@ const InputSection = ({ inputs, setInputs }) => {
                         </div>
                         <Slider
                             value={[inputs.allocation.core]}
+                            onValueChange={(value) => handleAllocationChange('core', value[0])}
                             max={100}
                             step={1}
-                            onValueChange={(val) => setInputs(prev => ({
-                                ...prev,
-                                allocation: { ...prev.allocation, core: val[0] }
-                            }))}
                         />
                     </div>
+                </div>
+
+                <div className="space-y-4 pt-4 border-t">
+                    <details className="group">
+                        <summary className="font-semibold cursor-pointer list-none flex items-center justify-between">
+                            <span>Advanced Inputs (Rates)</span>
+                            <span className="transition-transform group-open:rotate-180">▼</span>
+                        </summary>
+                        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="rateEmergency">Emergency Rate (%)</Label>
+                                <Input
+                                    id="rateEmergency"
+                                    type="number"
+                                    value={inputs.rates.emergency}
+                                    onChange={(e) => setInputs(prev => ({
+                                        ...prev,
+                                        rates: { ...prev.rates, emergency: Number(e.target.value) }
+                                    }))}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="rateAlpha">Alpha Rate (%)</Label>
+                                <Input
+                                    id="rateAlpha"
+                                    type="number"
+                                    value={inputs.rates.alpha}
+                                    onChange={(e) => setInputs(prev => ({
+                                        ...prev,
+                                        rates: { ...prev.rates, alpha: Number(e.target.value) }
+                                    }))}
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="rateCore">Core Rate (%)</Label>
+                                <Input
+                                    id="rateCore"
+                                    type="number"
+                                    value={inputs.rates.core}
+                                    onChange={(e) => setInputs(prev => ({
+                                        ...prev,
+                                        rates: { ...prev.rates, core: Number(e.target.value) }
+                                    }))}
+                                />
+                            </div>
+                        </div>
+                    </details>
                 </div>
             </CardContent>
         </Card>

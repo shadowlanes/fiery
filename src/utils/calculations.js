@@ -1,19 +1,12 @@
 /**
  * Calculates the future value of an investment with monthly contributions.
  * Formula: A = P(1 + r/n)^(nt) + PMT * ((1 + r/n)^(nt) - 1) / (r/n)
- * where:
- * P = Principal (initial corpus)
- * r = Annual interest rate (decimal)
- * n = Number of times interest applied per time period (12 for monthly)
- * t = Number of time periods elapsed (years)
- * PMT = Monthly contribution
  */
 export const calculateCompoundInterest = (principal, monthlyContribution, annualRate, years) => {
     const r = annualRate;
     const n = 12;
     const t = years;
 
-    // If rate is 0, simple addition
     if (r === 0) {
         return principal + (monthlyContribution * n * t);
     }
@@ -25,50 +18,52 @@ export const calculateCompoundInterest = (principal, monthlyContribution, annual
 };
 
 /**
- * Calculates the number of years to reach a target amount.
- * Solves for t in the compound interest formula.
- * Formula derived from A = P(1+r/n)^(nt) + PMT * ((1+r/n)^(nt) - 1) / (r/n)
- * Let R = 1 + r/n
- * A = P * R^(nt) + PMT * (R^(nt) - 1) / (r/n)
- * A * (r/n) = P * (r/n) * R^(nt) + PMT * R^(nt) - PMT
- * A * (r/n) + PMT = R^(nt) * (P * (r/n) + PMT)
- * R^(nt) = (A * (r/n) + PMT) / (P * (r/n) + PMT)
- * nt = ln((A * (r/n) + PMT) / (P * (r/n) + PMT)) / ln(R)
- * t = ln(...) / (n * ln(R))
+ * Generates projection data based on weighted buckets.
+ * Stops when the total portfolio value reaches the target number.
  */
-export const calculateYearsToTarget = (principal, monthlyContribution, annualRate, target) => {
-    if (principal >= target) return 0;
-
-    const r = annualRate;
-    const n = 12;
-
-    // If rate is 0, simple linear equation: target = principal + (monthly * 12 * t)
-    if (r === 0) {
-        if (monthlyContribution <= 0) return Infinity; // Never reach if no growth and no contribution
-        return (target - principal) / (monthlyContribution * 12);
-    }
-
-    const numerator = Math.log((target * (r / n) + monthlyContribution) / (principal * (r / n) + monthlyContribution));
-    const denominator = n * Math.log(1 + r / n);
-
-    const years = numerator / denominator;
-    return Math.max(0, years);
-};
-
-export const generateProjectionData = (initialCorpus, monthlyContribution, targetNumber, years = 20) => {
+export const generateProjectionData = (initialCorpus, monthlyContribution, targetNumber, allocation, rates) => {
     const data = [];
-    const rates = [0.05, 0.07, 0.10]; // Conservative, Expected, Aggressive
+    let year = 0;
+    let total = initialCorpus;
 
-    for (let year = 0; year <= years; year++) {
-        const point = {
+    // Initial values for each bucket
+    const initialEmergency = initialCorpus * (allocation.emergency / 100);
+    const initialAlpha = initialCorpus * (allocation.alpha / 100);
+    const initialCore = initialCorpus * (allocation.core / 100);
+
+    // Monthly contributions for each bucket
+    const monthlyEmergency = monthlyContribution * (allocation.emergency / 100);
+    const monthlyAlpha = monthlyContribution * (allocation.alpha / 100);
+    const monthlyCore = monthlyContribution * (allocation.core / 100);
+
+    // Rates (convert percentage to decimal)
+    const rateEmergency = rates.emergency / 100;
+    const rateAlpha = rates.alpha / 100;
+    const rateCore = rates.core / 100;
+
+    // Max years to prevent infinite loop if target is unreachable
+    const MAX_YEARS = 100;
+
+    while (total < targetNumber && year <= MAX_YEARS) {
+        const emergencyValue = calculateCompoundInterest(initialEmergency, monthlyEmergency, rateEmergency, year);
+        const alphaValue = calculateCompoundInterest(initialAlpha, monthlyAlpha, rateAlpha, year);
+        const coreValue = calculateCompoundInterest(initialCore, monthlyCore, rateCore, year);
+
+        total = emergencyValue + alphaValue + coreValue;
+
+        data.push({
             year,
-            conservative: calculateCompoundInterest(initialCorpus, monthlyContribution, rates[0], year),
-            expected: calculateCompoundInterest(initialCorpus, monthlyContribution, rates[1], year),
-            aggressive: calculateCompoundInterest(initialCorpus, monthlyContribution, rates[2], year),
+            emergency: emergencyValue,
+            alpha: alphaValue,
+            core: coreValue,
+            total,
             target: targetNumber,
-        };
-        data.push(point);
+        });
+
+        if (total >= targetNumber) break;
+        year++;
     }
+
     return data;
 };
 

@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import InputSection from './InputSection'
 import ProgressTracker from './ProgressTracker'
 import ProjectionChart from './ProjectionChart'
-import { generateProjectionData, calculateYearsToTarget } from '@/utils/calculations'
+import { generateProjectionData } from '@/utils/calculations'
 
 const Dashboard = () => {
     const [inputs, setInputs] = useState({
@@ -15,6 +15,11 @@ const Dashboard = () => {
             emergency: 1,
             alpha: 32,
             core: 67,
+        },
+        rates: {
+            emergency: 1,
+            alpha: 10,
+            core: 6,
         }
     });
 
@@ -27,28 +32,28 @@ const Dashboard = () => {
         return inputs.targetMultiple * inputs.annualExpense;
     }, [inputs.targetMultiple, inputs.annualExpense]);
 
-    const { yearsToFire, fireYear } = useMemo(() => {
-        const years = calculateYearsToTarget(
-            inputs.initialCorpus,
-            monthlyContribution,
-            0.07, // Expected rate
-            targetNumber
-        );
-        const currentYear = new Date().getFullYear();
-        return {
-            yearsToFire: years,
-            fireYear: Math.floor(currentYear + years)
-        };
-    }, [inputs.initialCorpus, monthlyContribution, targetNumber]);
-
     const projectionData = useMemo(() => {
-        // Inputs are in k$, so calculations will be in k$
         return generateProjectionData(
             inputs.initialCorpus,
             monthlyContribution,
-            targetNumber
+            targetNumber,
+            inputs.allocation,
+            inputs.rates
         );
-    }, [inputs.initialCorpus, monthlyContribution, targetNumber]);
+    }, [inputs.initialCorpus, monthlyContribution, targetNumber, inputs.allocation, inputs.rates]);
+
+    const { yearsToFire, fireYear } = useMemo(() => {
+        if (projectionData.length === 0) return { yearsToFire: 0, fireYear: new Date().getFullYear() };
+
+        const lastPoint = projectionData[projectionData.length - 1];
+        const years = lastPoint.total >= targetNumber ? lastPoint.year : Infinity;
+        const currentYear = new Date().getFullYear();
+
+        return {
+            yearsToFire: years,
+            fireYear: years === Infinity ? Infinity : currentYear + years
+        };
+    }, [projectionData, targetNumber]);
 
     return (
         <div className="max-w-7xl mx-auto space-y-6">
