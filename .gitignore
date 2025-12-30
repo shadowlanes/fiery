@@ -1,0 +1,19 @@
+# Common
+.DS_Store
+node_modules/
+dist/
+.env
+.env.local
+.env.*.local
+
+# Vite
+.vite/
+
+# Backend specific
+be/node_modules/
+be/dist/
+
+# Frontend specific
+fe/node_modules/
+fe/dist/
+fe/.vite/
