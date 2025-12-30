@@ -16,5 +16,5 @@ export const auth = betterAuth({
             redirectURI: `${process.env.BETTER_AUTH_URL || "http://localhost:3001"}/api/auth/callback/google`
         },
     },
-    trustedOrigins: ["http://localhost:8100"]
+    trustedOrigins: ["http://localhost:8100", `${process.env.FRONTEND_URL}`]
 });
