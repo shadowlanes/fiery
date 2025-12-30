@@ -12,11 +12,14 @@ import { loadGoal, saveGoal, getLatestCheckIn, getCheckInHistory, saveCheckIn } 
 import { LogIn, User, Loader2 } from 'lucide-react'
 import { Button } from './ui/button'
 import { toast } from 'sonner'
+import { PrivacyPolicyModal, TermsOfServiceModal } from './LegalModals'
 
 const Dashboard = () => {
     const [inputs, setInputs] = useState(getInitialInputs);
     const [isLoadingGoal, setIsLoadingGoal] = useState(false);
     const [checkInHistory, setCheckInHistory] = useState([]);
+    const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+    const [isTermsOpen, setIsTermsOpen] = useState(false);
     const { data: session, isPending } = authClient.useSession();
 
     // Load data when user logs in
@@ -219,6 +222,35 @@ const Dashboard = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Footer */}
+            <footer className="mt-auto py-12 px-4 border-t border-white/5 bg-slate-950/30 backdrop-blur-sm">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+                    <div className="flex items-center gap-2">
+                        <Telescope className="h-4 w-4 text-primary/60" />
+                        <span className="text-sm text-muted-foreground/60 font-medium tracking-wider">
+                            © {new Date().getFullYear()} VANTAGE • ALL RIGHTS RESERVED
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-8">
+                        <button
+                            onClick={() => setIsPrivacyOpen(true)}
+                            className="text-xs text-muted-foreground/60 hover:text-primary transition-colors uppercase tracking-[0.2em] font-black"
+                        >
+                            Privacy Policy
+                        </button>
+                        <button
+                            onClick={() => setIsTermsOpen(true)}
+                            className="text-xs text-muted-foreground/60 hover:text-primary transition-colors uppercase tracking-[0.2em] font-black"
+                        >
+                            Terms of Service
+                        </button>
+                    </div>
+                </div>
+            </footer>
+
+            <PrivacyPolicyModal isOpen={isPrivacyOpen} onClose={() => setIsPrivacyOpen(false)} />
+            <TermsOfServiceModal isOpen={isTermsOpen} onClose={() => setIsTermsOpen(false)} />
         </div>
     )
 }
