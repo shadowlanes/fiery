@@ -1,8 +1,10 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
+import goalRoutes from "./routes/goal";
 
 dotenv.config();
 
@@ -15,9 +17,13 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.use(cookieParser());
 
 // Better Auth handler
 app.use("/api/auth", toNodeHandler(auth));
+
+// Goal routes
+app.use("/api/goal", goalRoutes);
 
 app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });

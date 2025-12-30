@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { Telescope } from 'lucide-react'
 import InputSection from './InputSection'
 import ProgressTracker from './ProgressTracker'
@@ -6,12 +6,51 @@ import ProjectionChart from './ProjectionChart'
 import { getInitialInputs } from '@/utils/inputFetcher'
 import { generateProjectionData } from '@/utils/calculations'
 import { authClient } from '@/lib/auth-client'
+import { loadGoal, saveGoal } from '@/lib/api'
 import { LogIn, User, Loader2 } from 'lucide-react'
 import { Button } from './ui/button'
+import { toast } from 'sonner'
 
 const Dashboard = () => {
     const [inputs, setInputs] = useState(getInitialInputs);
+    const [isLoadingGoal, setIsLoadingGoal] = useState(false);
     const { data: session, isPending } = authClient.useSession();
+
+    // Load goal when user logs in
+    useEffect(() => {
+        const loadUserGoal = async () => {
+            if (session?.user && !isLoadingGoal) {
+                setIsLoadingGoal(true);
+                try {
+                    const goal = await loadGoal();
+                    if (goal) {
+                        setInputs(goal);
+                        toast.success('Goal loaded successfully');
+                    }
+                } catch (error) {
+                    console.error('Failed to load goal:', error);
+                    // Don't show error toast for 404 (no goal found)
+                    if (error.message !== 'Failed to load goal') {
+                        toast.error('Failed to load goal');
+                    }
+                } finally {
+                    setIsLoadingGoal(false);
+                }
+            }
+        };
+
+        loadUserGoal();
+    }, [session?.user?.id]); // Only run when user ID changes
+
+    const handleSaveGoal = async () => {
+        try {
+            await saveGoal(inputs);
+            toast.success('Goal saved successfully');
+        } catch (error) {
+            console.error('Failed to save goal:', error);
+            toast.error(error.message || 'Failed to save goal');
+        }
+    };
 
     const handleLogin = async () => {
         await authClient.signIn.social({
@@ -113,7 +152,12 @@ const Dashboard = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4">
                     <div className="lg:col-span-1 space-y-6 transition-all duration-300">
-                        <InputSection inputs={inputs} setInputs={setInputs} />
+                        <InputSection
+                            inputs={inputs}
+                            setInputs={setInputs}
+                            onSave={handleSaveGoal}
+                            isAuthenticated={!!session}
+                        />
                     </div>
 
                     <div className="lg:col-span-2 space-y-6 transition-all duration-300">

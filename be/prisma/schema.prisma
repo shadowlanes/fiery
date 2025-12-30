@@ -72,3 +72,29 @@ model Verification {
 
   @@map("verification")
 }
+
+model Goal {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  
+  // Financial inputs
+  targetMultiple    Float
+  initialCorpus     Float
+  emergencyCorpus   Float
+  annualIncome      Float
+  annualExpense     Float
+  
+  // Allocation percentages
+  allocationHighRisk Float
+  allocationSafe     Float
+  
+  // Rates
+  rateEmergency     Float
+  rateHighRisk      Float
+  rateSafe          Float
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@map("goal")
+}

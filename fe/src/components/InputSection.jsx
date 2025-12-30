@@ -1,20 +1,55 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { formatCurrency } from "@/utils/calculations"
+import { Save, Loader2 } from 'lucide-react'
 
-const InputSection = ({ inputs, setInputs }) => {
+const InputSection = ({ inputs, setInputs, onSave, isAuthenticated }) => {
+    const [isSaving, setIsSaving] = useState(false);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setInputs(prev => ({ ...prev, [name]: parseFloat(value) || 0 }));
     };
 
+    const handleSave = async () => {
+        setIsSaving(true);
+        try {
+            await onSave();
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
     return (
         <Card className="w-full">
             <CardHeader>
-                <CardTitle>Financial Inputs (k$)</CardTitle>
+                <div className="flex items-center justify-between">
+                    <CardTitle>Financial Inputs (k$)</CardTitle>
+                    {isAuthenticated && (
+                        <Button
+                            onClick={handleSave}
+                            disabled={isSaving}
+                            size="sm"
+                            className="gap-2"
+                        >
+                            {isSaving ? (
+                                <>
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                    Saving...
+                                </>
+                            ) : (
+                                <>
+                                    <Save className="h-4 w-4" />
+                                    Save Goal
+                                </>
+                            )}
+                        </Button>
+                    )}
+                </div>
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
