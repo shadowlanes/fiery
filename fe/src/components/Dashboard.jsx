@@ -3,10 +3,12 @@ import { Telescope } from 'lucide-react'
 import InputSection from './InputSection'
 import ProgressTracker from './ProgressTracker'
 import ProjectionChart from './ProjectionChart'
+import CheckInWidget from './CheckInWidget'
+import CheckInHistory from './CheckInHistory'
 import { getInitialInputs } from '@/utils/inputFetcher'
 import { generateProjectionData } from '@/utils/calculations'
 import { authClient } from '@/lib/auth-client'
-import { loadGoal, saveGoal } from '@/lib/api'
+import { loadGoal, saveGoal, getLatestCheckIn, getCheckInHistory, saveCheckIn } from '@/lib/api'
 import { LogIn, User, Loader2 } from 'lucide-react'
 import { Button } from './ui/button'
 import { toast } from 'sonner'
@@ -14,24 +16,41 @@ import { toast } from 'sonner'
 const Dashboard = () => {
     const [inputs, setInputs] = useState(getInitialInputs);
     const [isLoadingGoal, setIsLoadingGoal] = useState(false);
+    const [checkInHistory, setCheckInHistory] = useState([]);
     const { data: session, isPending } = authClient.useSession();
 
-    // Load goal when user logs in
+    // Load data when user logs in
     useEffect(() => {
-        const loadUserGoal = async () => {
+        const loadUserData = async () => {
             if (session?.user && !isLoadingGoal) {
                 setIsLoadingGoal(true);
                 try {
+                    // Load Goal first
                     const goal = await loadGoal();
+                    let currentInputs = inputs;
                     if (goal) {
+                        currentInputs = goal;
                         setInputs(goal);
                         toast.success('Goal loaded successfully');
                     }
+
+                    // Then Load Check-ins
+                    const latestCheckIn = await getLatestCheckIn();
+                    const history = await getCheckInHistory();
+                    setCheckInHistory(history);
+
+                    if (latestCheckIn) {
+                        setInputs({
+                            ...currentInputs,
+                            initialCorpus: latestCheckIn.corpusValue
+                        });
+                        toast.info(`Using latest check-in corpus: ${latestCheckIn.corpusValue}k$`);
+                    }
                 } catch (error) {
-                    console.error('Failed to load goal:', error);
-                    // Don't show error toast for 404 (no goal found)
-                    if (error.message !== 'Failed to load goal') {
-                        toast.error('Failed to load goal');
+                    console.error('Failed to load user data:', error);
+                    // Don't show error toast for 404 (no goal/check-in found)
+                    if (error.message !== 'Failed to load goal' && error.message !== 'Failed to get latest check-in') {
+                        toast.error('Failed to load user data');
                     }
                 } finally {
                     setIsLoadingGoal(false);
@@ -39,7 +58,7 @@ const Dashboard = () => {
             }
         };
 
-        loadUserGoal();
+        loadUserData();
     }, [session?.user?.id]); // Only run when user ID changes
 
     const handleSaveGoal = async () => {
@@ -49,6 +68,24 @@ const Dashboard = () => {
         } catch (error) {
             console.error('Failed to save goal:', error);
             toast.error(error.message || 'Failed to save goal');
+        }
+    };
+
+    const handleCheckIn = async (corpusValue, month) => {
+        try {
+            await saveCheckIn(corpusValue, month);
+            // Refresh history after check-in
+            const history = await getCheckInHistory();
+            setCheckInHistory(history);
+
+            // Update current inputs with new corpus
+            setInputs(prev => ({
+                ...prev,
+                initialCorpus: corpusValue
+            }));
+        } catch (error) {
+            console.error('Check-in failed:', error);
+            throw error;
         }
     };
 
@@ -158,6 +195,12 @@ const Dashboard = () => {
                             onSave={handleSaveGoal}
                             isAuthenticated={!!session}
                         />
+                        {session && (
+                            <CheckInWidget
+                                onCheckIn={handleCheckIn}
+                                currentCorpus={inputs.initialCorpus}
+                            />
+                        )}
                     </div>
 
                     <div className="lg:col-span-2 space-y-6 transition-all duration-300">
@@ -169,6 +212,10 @@ const Dashboard = () => {
                             fireYear={fireYear}
                         />
                         <ProjectionChart data={projectionData} target={targetNumber} />
+
+                        {session && (
+                            <CheckInHistory history={checkInHistory} />
+                        )}
                     </div>
                 </div>
             </div>

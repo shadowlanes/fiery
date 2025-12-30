@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import goalRoutes from "./routes/goal";
+import checkinRoutes from "./routes/checkin";
 
 dotenv.config();
 
@@ -24,6 +25,9 @@ app.use("/api/auth", toNodeHandler(auth));
 
 // Goal routes
 app.use("/api/goal", goalRoutes);
+
+// Check-in routes
+app.use("/api/checkin", checkinRoutes);
 
 app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
