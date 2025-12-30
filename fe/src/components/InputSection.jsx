@@ -98,15 +98,15 @@ const InputSection = ({ inputs, setInputs, onSave, isAuthenticated }) => {
                 <div className="space-y-4 pt-4 border-t">
                     <h3 className="font-semibold">Asset Allocation</h3>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="emergencyCorpus">Emergency Fund (Fixed k$)</Label>
+                    <div className="flex items-center justify-between gap-4">
+                        <Label htmlFor="emergencyCorpus" className="whitespace-nowrap">Emergency Fund</Label>
                         <Input
                             id="emergencyCorpus"
                             name="emergencyCorpus"
                             type="number"
                             value={inputs.emergencyCorpus}
                             onChange={handleChange}
-                            className="bg-[hsl(var(--chart-1))]/10 border-[hsl(var(--chart-1))]"
+                            className="bg-[hsl(var(--chart-1))]/10 border-[hsl(var(--chart-1))] w-24 text-right"
                         />
                     </div>
 
